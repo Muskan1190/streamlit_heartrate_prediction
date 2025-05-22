@@ -95,4 +95,4 @@ Use the **"Reset All Inputs"** button to quickly clear all sidebar fields and tr
 ## 🧠 Credits
 
 - Dataset Source: [Kaggle - Heart Failure Prediction](https://www.kaggle.com/datasets/fedesoriano/heart-failure-prediction)
-- Developed with 💻 by [Your Name Here]
+- Developed with 💻 by [Muskan Patel]
