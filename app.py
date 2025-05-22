@@ -118,8 +118,8 @@ def display_result(prediction, probability):
 
     # Disclaimer
     st.info(
-        "⚠️ This app can assist medical professionals in evaluating risk, "
-        "but should not be used as a substitute for professional diagnosis."
+        "⚠️ This application is just a fun project based on limited data, "
+        "so should not be used as a substitute for professional diagnosis."
     )
 
 def main():
