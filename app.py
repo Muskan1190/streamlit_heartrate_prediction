@@ -116,8 +116,8 @@ def display_result(prediction, probability):
         st.success("✅ **Low risk of heart disease.**")
 
     st.info(
-    ⚠️ This app can assist medical professionals in evaluating risk,  
-    but should not be used as a substitute for professional diagnosis.
+    "⚠️ This app can assist medical professionals in evaluating risk,  
+    but should not be used as a substitute for professional diagnosis."
     )
 
 def main():
