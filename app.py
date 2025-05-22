@@ -103,22 +103,24 @@ def display_radar_chart(data):
 def display_result(prediction, probability):
     st.subheader("🧪 Cell Cluster Prediction")
 
-    # Display raw model prediction
+    # Display model label
     label = "Positive (At Risk)" if prediction == 1 else "Negative (Low Risk)"
     st.markdown(f"**Model Prediction:** {label}")
 
+    # Show exact probability
     st.markdown(f"**Predicted probability of heart disease:** `{probability:.2f}`")
 
-    # Now classify based on probability only
+    # Interpret risk based on probability threshold
     if probability >= 0.5:
         st.error("⚠️ **High risk of heart disease.**")
     else:
         st.success("✅ **Low risk of heart disease.**")
 
-     st.info(
+    # Disclaimer
+    st.info(
         "⚠️ This app can assist medical professionals in evaluating risk, "
         "but should not be used as a substitute for professional diagnosis."
-     )
+    )
 
 def main():
     st.set_page_config(page_title="Heart Disease Estimator", layout="wide")
