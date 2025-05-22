@@ -30,7 +30,7 @@ def render_sidebar():
     cholesterol = st.sidebar.slider("Cholesterol Level", 100, 600, 200, key="cholesterol")
     fasting_bs = st.sidebar.radio("Fasting Blood Sugar > 120 mg/dl", ["Yes", "No"], key="fasting_bs")
     resting_ecg = st.sidebar.selectbox("Resting ECG Result", ["LVH", "ST"], key="resting_ecg")
-    max_hr = st.sidebar.slider("Max Heart Rate Achieved", 60, 220, 150, key="max_hr")
+    maxhr = st.sidebar.slider("Max Heart Rate Achieved", 60, 220, 150, key="maxhr")
     exercise_angina = st.sidebar.radio("Exercise-Induced Angina", ["Yes", "No"], key="exercise_angina")
     oldpeak = st.sidebar.slider("Oldpeak (ST Depression)", 0.0, 6.0, 1.0, step=0.1, key="oldpeak")
     st_slope = st.sidebar.selectbox("ST Slope", ["Up", "Flat", "Down"], key="st_slope")
@@ -76,11 +76,12 @@ def build_input_dataframe(inputs):
 
     df = pd.DataFrame([data])
     radar_data = {
-        "age": inputs["age"],
-        "cholesterol": inputs["cholesterol"],
-        "maxhr": inputs["max_hr"],
-        "oldpeak": inputs["oldpeak"]
+    "Age": inputs["age"],
+    "Cholesterol": inputs["cholesterol"],
+    "MaxHR": inputs["max_hr"],
+    "Oldpeak": inputs["oldpeak"]
     }
+
 
     return df, radar_data
 
@@ -139,6 +140,7 @@ def main():
 
     display_result(prediction, probability)
     st.subheader("Summary of Your Input")
+    st.write("Radar Data Preview:", radar_data)
     display_radar_chart(radar_data)
 
 # ----------------------------------
