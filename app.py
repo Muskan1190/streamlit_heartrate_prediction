@@ -115,10 +115,10 @@ def display_result(prediction, probability):
     else:
         st.success("✅ **Low risk of heart disease.**")
 
-    st.info(
-    "⚠️ This app can assist medical professionals in evaluating risk,  
-    but should not be used as a substitute for professional diagnosis."
-    )
+     st.info(
+        "⚠️ This app can assist medical professionals in evaluating risk, "
+        "but should not be used as a substitute for professional diagnosis."
+     )
 
 def main():
     st.set_page_config(page_title="Heart Disease Estimator", layout="wide")
