@@ -28,12 +28,12 @@ def render_sidebar():
     sex = st.sidebar.radio("Sex", ["Male", "Female"], key="sex")
     chest_pain = st.sidebar.selectbox("Chest Pain Type", ["ATA", "NAP", "ASY"], key="chest_pain")
     cholesterol = st.sidebar.slider("Cholesterol Level", 100, 600, 200, key="cholesterol")
-    fasting_bs = st.sidebar.radio("Fasting Blood Sugar > 120 mg/dl", ["Yes", "No"], key="fasting_bs")
-    resting_ecg = st.sidebar.selectbox("Resting ECG Result", ["LVH", "ST"], key="resting_ecg")
-    maxhr = st.sidebar.slider("Max Heart Rate Achieved", 60, 220, 150, key="maxhr")
-    exercise_angina = st.sidebar.radio("Exercise-Induced Angina", ["Yes", "No"], key="exercise_angina")
-    oldpeak = st.sidebar.slider("Oldpeak (ST Depression)", 0.0, 6.0, 1.0, step=0.1, key="oldpeak")
-    st_slope = st.sidebar.selectbox("ST Slope", ["Up", "Flat", "Down"], key="st_slope")
+    fasting_bs = st.sidebar.radio("Fasting Blood Sugar", [0, 1], format_func=lambda x: "Yes" if x == 1 else "No", key="fasting_bs")
+    max_hr = st.sidebar.slider("Maximum Heart Rate", 60, 220, 150, key="max_hr")
+    oldpeak = st.sidebar.slider("Oldpeak (ST depression)", 0.0, 6.0, 1.0, 0.1, key="oldpeak")
+    exercise_angina = st.sidebar.radio("Exercise Induced Angina", ["Yes", "No"], key="exercise_angina")
+    st_slope = st.sidebar.selectbox("ST Slope", ["Flat", "Up", "Down"], key="st_slope")
+    resting_ecg = st.sidebar.selectbox("Resting ECG", ["Normal", "ST", "LVH"], key="resting_ecg")
 
     return {
         "age": age,
@@ -41,11 +41,11 @@ def render_sidebar():
         "chest_pain": chest_pain,
         "cholesterol": cholesterol,
         "fasting_bs": fasting_bs,
-        "resting_ecg": resting_ecg,
         "max_hr": max_hr,
-        "exercise_angina": exercise_angina,
         "oldpeak": oldpeak,
-        "st_slope": st_slope
+        "exercise_angina": exercise_angina,
+        "st_slope": st_slope,
+        "resting_ecg": resting_ecg
     }
 
 # ----------------------------------
@@ -54,34 +54,34 @@ def render_sidebar():
 def build_input_dataframe(inputs):
     data = {
         "age": inputs["age"],
-        "sex": 1 if inputs["sex"] == "Male" else 0,
+        "sex_m": 1 if inputs["sex"] == "Male" else 0,
         "cholesterol": inputs["cholesterol"],
-        "fastingbs": 1 if inputs["fasting_bs"] == "Yes" else 0,
+        "fastingbs": int(inputs["fasting_bs"]),
         "maxhr": inputs["max_hr"],
         "oldpeak": inputs["oldpeak"],
-        "exerciseangina": 1 if inputs["exercise_angina"] == "Yes" else 0,
+        "exerciseangina_y": 1 if inputs["exercise_angina"] == "Yes" else 0,
         f"chestpaintype_{inputs['chest_pain'].lower()}": 1,
         f"restingecg_{inputs['resting_ecg'].lower()}": 1,
         f"st_slope_{inputs['st_slope'].lower()}": 1
     }
 
     # Fill missing dummy variables with 0
-    for col in [
-        "chestpaintype_asy", "chestpaintype_ata", "chestpaintype_nap",
-        "restingecg_lvh", "restingecg_st",
-        "st_slope_flat", "st_slope_up"
-    ]:
+    expected_dummies = [
+        "chestpaintype_asy", "chestpaintype_nap",  # ATA was dropped
+        "restingecg_st", "restingecg_lvh",         # Normal was dropped
+        "st_slope_flat", "st_slope_down"           # Up was dropped
+    ]
+    for col in expected_dummies:
         if col not in data:
             data[col] = 0
 
     df = pd.DataFrame([data])
     radar_data = {
-    "Age": inputs["age"],
-    "Cholesterol": inputs["cholesterol"],
-    "MaxHR": inputs["max_hr"],
-    "Oldpeak": inputs["oldpeak"]
+        "Age": inputs["age"],
+        "Cholesterol": inputs["cholesterol"],
+        "MaxHR": inputs["max_hr"],
+        "Oldpeak": inputs["oldpeak"]
     }
-
 
     return df, radar_data
 
@@ -121,16 +121,16 @@ def display_radar_chart(data):
 def display_result(prediction, probability):
     st.subheader("Prediction Result")
     if prediction == 1:
-        st.error(f"High risk of heart disease.\n\nEstimated probability: **{probability:.2f}**")
+        st.error(f"⚠️ High risk of heart disease.\n\nEstimated probability: **{probability:.2f}**")
     else:
-        st.success(f"Low risk of heart disease.\n\nEstimated probability: **{1 - probability:.2f}**")
+        st.success(f"✅ Low risk of heart disease.\n\nEstimated probability: **{1 - probability:.2f}**")
 
 # ----------------------------------
 # Main app function
 # ----------------------------------
 def main():
     st.set_page_config(page_title="Heart Disease Predictor", layout="centered")
-    st.title("Heart Disease Risk Estimator")
+    st.title("🫀 Heart Disease Risk Estimator")
     st.markdown("This tool predicts the likelihood of heart disease based on your medical inputs using a trained logistic regression model.")
 
     model, expected_columns = load_model_and_columns()
