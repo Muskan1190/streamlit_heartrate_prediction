@@ -14,7 +14,15 @@ def render_sidebar():
     st.sidebar.title("🧾 Patient Information")
     st.sidebar.markdown("Adjust the patient's clinical measurements:")
 
+    # Use a flag to track reset
+    if "reset_triggered" not in st.session_state:
+        st.session_state.reset_triggered = False
+
     if st.sidebar.button("🔄 Reset All Inputs"):
+        st.session_state.reset_triggered = True
+
+    # Only reset once and rerun
+    if st.session_state.reset_triggered:
         st.session_state["age"] = 50
         st.session_state["sex"] = "Male"
         st.session_state["chest_pain"] = "ATA"
@@ -25,19 +33,20 @@ def render_sidebar():
         st.session_state["exercise_angina"] = "No"
         st.session_state["st_slope"] = "Up"
         st.session_state["resting_ecg"] = "Normal"
+        st.session_state.reset_triggered = False
         st.experimental_rerun()
 
-    age = st.sidebar.slider("Age", 20, 80, 50, key="age")
-    sex = st.sidebar.radio("Sex", ["Male", "Female"], key="sex")
-    chest_pain = st.sidebar.selectbox("Chest Pain Type", ["ATA", "NAP", "ASY"], key="chest_pain")
-    cholesterol = st.sidebar.slider("Cholesterol", 100, 600, 200, key="cholesterol")
-    fasting_bs = st.sidebar.radio("Fasting Blood Sugar", [0, 1], format_func=lambda x: "Yes" if x == 1 else "No", key="fasting_bs")
-    max_hr = st.sidebar.slider("❤ Max Heart Rate", 60, 220, 150, key="max_hr")
-    oldpeak = st.sidebar.slider("ST Depression (Oldpeak)", 0.0, 6.0, 1.0, 0.1, key="oldpeak")
+    age = st.sidebar.slider("Age", 20, 80, st.session_state.get("age", 50), key="age")
+    sex = st.sidebar.radio("Sex", ["Male", "Female"], index=0 if st.session_state.get("sex", "Male") == "Male" else 1, key="sex")
+    chest_pain = st.sidebar.selectbox("Chest Pain Type", ["ATA", "NAP", "ASY"], index=["ATA", "NAP", "ASY"].index(st.session_state.get("chest_pain", "ATA")), key="chest_pain")
+    cholesterol = st.sidebar.slider("Cholesterol", 100, 600, st.session_state.get("cholesterol", 200), key="cholesterol")
+    fasting_bs = st.sidebar.radio("Fasting Blood Sugar", [0, 1], index=st.session_state.get("fasting_bs", 0), format_func=lambda x: "Yes" if x == 1 else "No", key="fasting_bs")
+    max_hr = st.sidebar.slider("❤ Max Heart Rate", 60, 220, st.session_state.get("max_hr", 150), key="max_hr")
+    oldpeak = st.sidebar.slider("ST Depression (Oldpeak)", 0.0, 6.0, st.session_state.get("oldpeak", 1.0), 0.1, key="oldpeak")
     st.sidebar.write(f"Selected Oldpeak value: {oldpeak}")
-    exercise_angina = st.sidebar.radio("Exercise Induced Angina", ["Yes", "No"], key="exercise_angina")
-    st_slope = st.sidebar.selectbox("ST Slope", ["Flat", "Up", "Down"], key="st_slope")
-    resting_ecg = st.sidebar.selectbox("Resting ECG", ["Normal", "ST", "LVH"], key="resting_ecg")
+    exercise_angina = st.sidebar.radio("Exercise Induced Angina", ["Yes", "No"], index=0 if st.session_state.get("exercise_angina", "No") == "Yes" else 1, key="exercise_angina")
+    st_slope = st.sidebar.selectbox("ST Slope", ["Flat", "Up", "Down"], index=["Flat", "Up", "Down"].index(st.session_state.get("st_slope", "Up")), key="st_slope")
+    resting_ecg = st.sidebar.selectbox("Resting ECG", ["Normal", "ST", "LVH"], index=["Normal", "ST", "LVH"].index(st.session_state.get("resting_ecg", "Normal")), key="resting_ecg")
 
     return {
         "age": age,
@@ -51,6 +60,7 @@ def render_sidebar():
         "st_slope": st_slope,
         "resting_ecg": resting_ecg
     }
+
 
 def build_input_dataframe(inputs):
     data = {
