@@ -14,9 +14,10 @@ def render_sidebar():
     st.sidebar.title("🧾 Patient Information")
     st.sidebar.markdown("Adjust the patient's clinical measurements:")
 
-    if st.sidebar.button("\U0001F504 Reset All Inputs"):
-        for key in st.session_state.keys():
-            del st.session_state[key]
+    if st.sidebar.button("🔄 Reset All Inputs"):
+        for key in list(st.session_state.keys()):
+            if key != "reset_button":
+                del st.session_state[key]
         st.experimental_rerun()
 
     age = st.sidebar.slider("Age", 20, 80, 50, key="age")
@@ -26,9 +27,10 @@ def render_sidebar():
     fasting_bs = st.sidebar.radio("Fasting Blood Sugar", [0, 1], format_func=lambda x: "Yes" if x == 1 else "No", key="fasting_bs")
     max_hr = st.sidebar.slider("❤ Max Heart Rate", 60, 220, 150, key="max_hr")
     oldpeak = st.sidebar.slider("ST Depression (Oldpeak)", 0.0, 6.0, 1.0, 0.1, key="oldpeak")
-    exercise_angina = st.sidebar.radio(" Exercise Induced Angina", ["Yes", "No"], key="exercise_angina")
-    st_slope = st.sidebar.selectbox(" ST Slope", ["Flat", "Up", "Down"], key="st_slope")
-    resting_ecg = st.sidebar.selectbox(" Resting ECG", ["Normal", "ST", "LVH"], key="resting_ecg")
+    st.sidebar.write(f"Selected Oldpeak value: {oldpeak}")
+    exercise_angina = st.sidebar.radio("Exercise Induced Angina", ["Yes", "No"], key="exercise_angina")
+    st_slope = st.sidebar.selectbox("ST Slope", ["Flat", "Up", "Down"], key="st_slope")
+    resting_ecg = st.sidebar.selectbox("Resting ECG", ["Normal", "ST", "LVH"], key="resting_ecg")
 
     return {
         "age": age,
@@ -103,20 +105,15 @@ def display_radar_chart(data):
 def display_result(prediction, probability):
     st.subheader("🧪 Cell Cluster Prediction")
 
-    # Display model label
     label = "Positive (At Risk)" if prediction == 1 else "Negative (Low Risk)"
     st.markdown(f"**Model Prediction:** {label}")
-
-    # Show exact probability
     st.markdown(f"**Predicted probability of heart disease:** `{probability:.2f}`")
 
-    # Interpret risk based on probability threshold
     if probability >= 0.5:
         st.error("⚠️ **High risk of heart disease.**")
     else:
         st.success("✅ **Low risk of heart disease.**")
 
-    # Disclaimer
     st.info(
         "⚠️ This application is just a fun project based on limited data, "
         "so should not be used as a substitute for professional diagnosis."
@@ -139,7 +136,7 @@ def main():
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        st.subheader("Feature Profile Radar")
+        st.subheader("📊 Feature Profile Radar")
         display_radar_chart(radar_data)
 
     with col2:
