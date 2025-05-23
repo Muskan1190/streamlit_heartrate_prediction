@@ -84,22 +84,38 @@ def make_prediction(model, input_df, expected_columns):
     return prediction, probability
 
 def display_radar_chart(data):
+    # Set max values for normalization
+    max_vals = {
+        "Age": 80,
+        "Cholesterol": 600,
+        "MaxHR": 220,
+        "Oldpeak": 6.0
+    }
+
     labels = list(data.keys())
-    values = list(data.values())
+    raw_values = [data[label] for label in labels]
+    norm_values = [data[label] / max_vals[label] for label in labels]
+
+    # Complete the loop
+    norm_values += norm_values[:1]
     angles = np.linspace(0, 2 * np.pi, len(labels), endpoint=False).tolist()
-    values += values[:1]
     angles += angles[:1]
 
     fig, ax = plt.subplots(figsize=(6, 6), subplot_kw=dict(polar=True))
-    ax.plot(angles, values, color='crimson', linewidth=2)
-    ax.fill(angles, values, color='crimson', alpha=0.25)
+    ax.plot(angles, norm_values, color='crimson', linewidth=2)
+    ax.fill(angles, norm_values, color='crimson', alpha=0.25)
+
     ax.set_xticks(angles[:-1])
     ax.set_xticklabels(labels)
-    ax.set_title("Input Feature Profile")
+
+    # Add radial labels (optional)
+    ax.set_rlabel_position(30)
+    ax.set_title("Normalized Input Feature Profile")
     st.pyplot(fig)
 
+
 def display_result(prediction, probability):
-    st.subheader("🧪 Cell Cluster Prediction")
+    st.subheader("Hear Disease Prediction")
 
     label = "Positive (At Risk)" if prediction == 1 else "Negative (Low Risk)"
     st.markdown(f"**Model Prediction:** {label}")
