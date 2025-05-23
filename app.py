@@ -15,9 +15,16 @@ def render_sidebar():
     st.sidebar.markdown("Adjust the patient's clinical measurements:")
 
     if st.sidebar.button("🔄 Reset All Inputs"):
-        for key in list(st.session_state.keys()):
-            if key != "reset_button":
-                del st.session_state[key]
+        st.session_state["age"] = 50
+        st.session_state["sex"] = "Male"
+        st.session_state["chest_pain"] = "ATA"
+        st.session_state["cholesterol"] = 200
+        st.session_state["fasting_bs"] = 0
+        st.session_state["max_hr"] = 150
+        st.session_state["oldpeak"] = 1.0
+        st.session_state["exercise_angina"] = "No"
+        st.session_state["st_slope"] = "Up"
+        st.session_state["resting_ecg"] = "Normal"
         st.experimental_rerun()
 
     age = st.sidebar.slider("Age", 20, 80, 50, key="age")
