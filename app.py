@@ -19,7 +19,7 @@ def render_sidebar():
     chest_pain = st.sidebar.selectbox("Chest Pain Type", ["ATA", "NAP", "ASY"], key="chest_pain")
     cholesterol = st.sidebar.slider("Cholesterol", 100, 600, 200, key="cholesterol")
     fasting_bs = st.sidebar.radio("Fasting Blood Sugar", [0, 1], format_func=lambda x: "Yes" if x == 1 else "No", key="fasting_bs")
-    max_hr = st.sidebar.slider("❤ Max Heart Rate", 60, 220, 150, key="max_hr")
+    max_hr = st.sidebar.slider("Max Heart Rate", 60, 220, 150, key="max_hr")
     oldpeak = st.sidebar.slider("ST Depression (Oldpeak)", 0.0, 6.0, 1.0, 0.1, key="oldpeak")
     st.sidebar.write(f"Selected Oldpeak value: {oldpeak}")
     exercise_angina = st.sidebar.radio("Exercise Induced Angina", ["Yes", "No"], key="exercise_angina")
@@ -148,7 +148,7 @@ def main():
     col1, col2 = st.columns([2, 1])
 
     with col1:
-        st.subheader("📊 Feature Profile Radar")
+        st.subheader("Feature Profile Radar")
         display_radar_chart(radar_data)
 
     with col2:
