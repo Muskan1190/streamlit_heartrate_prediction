@@ -115,7 +115,7 @@ def display_radar_chart(data):
 
 
 def display_result(prediction, probability):
-    st.subheader("Hear Disease Prediction")
+    st.subheader("Heart Disease Prediction")
 
     label = "Positive (At Risk)" if prediction == 1 else "Negative (Low Risk)"
     st.markdown(f"**Model Prediction:** {label}")
